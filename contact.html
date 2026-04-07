@@ -117,7 +117,7 @@
         <h2 style="margin-bottom:0.25rem;">Stuur ons een bericht</h2>
         <p style="color:var(--tekst); margin-bottom:2rem;">Vul het formulier in en wij nemen zo snel mogelijk contact met u op.</p>
 
-        <form id="contactFormulier" novalidate>
+        <form id="contactFormulier" action="https://formspree.io/f/xpqobonz" method="POST" novalidate>
           <div class="form-rij">
             <div class="form-groep">
               <label for="voornaam">Voornaam <span class="vereist">*</span></label>
@@ -264,16 +264,29 @@
         }
       });
       if(!geldig) return;
-      // Toon succesbericht
-      const kaart = form.closest('.formulier-kaart');
-      kaart.innerHTML = `
-        <div style="text-align:center; padding:3rem 1rem;">
-          <div style="width:64px;height:64px;background:var(--oranje);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <h2 style="margin-bottom:0.75rem;">Bericht verzonden!</h2>
-          <p style="color:var(--tekst);">Bedankt voor uw bericht. Wij nemen zo snel mogelijk contact met u op.</p>
-        </div>`;
+      // Verstuur via Formspree
+      const data = new FormData(form);
+      fetch(form.action, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      }).then(function(response) {
+        if(response.ok) {
+          const kaart = form.closest('.formulier-kaart');
+          kaart.innerHTML = `
+            <div style="text-align:center; padding:3rem 1rem;">
+              <div style="width:64px;height:64px;background:var(--oranje);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <h2 style="margin-bottom:0.75rem;">Bericht verzonden!</h2>
+              <p style="color:var(--tekst);">Bedankt voor uw bericht. Wij nemen zo snel mogelijk contact met u op.</p>
+            </div>`;
+        } else {
+          alert('Er ging iets mis. Probeer het opnieuw of neem telefonisch contact op.');
+        }
+      }).catch(function() {
+        alert('Er ging iets mis. Probeer het opnieuw of neem telefonisch contact op.');
+      });
     });
   }
 </script>
